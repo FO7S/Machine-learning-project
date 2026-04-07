@@ -21,7 +21,14 @@ The dataset contains **29,039 records** of trilobite fossil occurrences, providi
 - **Geography:** Covers fossil locations including *country, latitude, longitude,* and *formation*
 - **Ecology & Biology:** Describes organism characteristics such as *diet, vision type, life habit,* and *environment*
 
-## 🚀 Project Goal
+## 🚀 Project Objectives
+
+This project applies both supervised and unsupervised machine learning techniques to analyze trilobite fossil data and extract meaningful insights:
+
+- **Country Classification** 
+- **Time Period Classification** 
+- **Environment Clustering** 
+- **Age Prediction (Regression)**
 
 ## Dataset: 
 https://www.kaggle.com/datasets/kayleefranklin/predict-the-age-of-a-trilobite
