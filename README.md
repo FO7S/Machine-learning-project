@@ -1,156 +1,167 @@
-# Predict the Age of a Trilobite Fossil  (Machine Learning Project)
+# Predict the Age of a Trilobite Fossil (Machine Learning Project)
 
 <p align="center">
   <img src="images/trilobites.jpg" width="850">
 </p>
 
 <p align="center">
-  <b>Using Machine Learning to Decode Earth's Ancient Life 🌍</b>
+  <b>Using Machine Learning to Decode Earth's Ancient Life</b>
 </p>
 
 ---
 
-## 🚀 Overview
+## Overview
 
 This project explores how machine learning can be applied to paleontological data to analyze trilobite fossils and uncover patterns related to their age, distribution, and environment.
 
-We built multiple models to solve different real-world tasks using the same dataset.
+Multiple models were developed to solve different tasks using the same dataset.
 
 ---
 
-## 🐚 What Were Trilobites?
+## What Were Trilobites?
 
 Trilobites were ancient marine arthropods that lived hundreds of millions of years ago.
 
-- 🕰 **First Appearance:** ~521 million years ago (Cambrian)  
-- 💀 **Extinction:** ~251 million years ago (Permian extinction)  
-- 🌊 **Habitat:** Marine environments  
-- 🍽 **Diet:** Predators, scavengers, filter feeders  
+- First Appearance: ~521 million years ago (Cambrian)  
+- Extinction: ~251 million years ago (Permian extinction)  
+- Habitat: Marine environments  
+- Diet: Predators, scavengers, filter feeders  
 
 ---
 
-## 📊 Dataset Overview
+## Dataset Overview
 
-- 📁 **Total Records:** 29,039  
--  **Global Coverage:** Multiple countries and geological formations  
+- Total Records: 29,039  
+- Global Coverage: Multiple countries and geological formations  
 
-### 🔑 Key Features:
+### Key Features:
 
-| Category | Examples |
-|--------|--------|
-|  Taxonomy | order, family, genus |
-|  Geography | country, latitude, longitude |
-|  Ecology | environment, diet, vision |
-|  Geology | lithology, formation |
-|  Time | time_period |
-
----
-
-#  Machine Learning Tasks
-
-We implemented four different machine learning models:
+| Category   | Examples                         |
+|-----------|---------------------------------|
+| Taxonomy  | order, family, genus            |
+| Geography | country, latitude, longitude    |
+| Ecology   | environment, diet, vision       |
+| Geology   | lithology, formation            |
+| Time      | time_period                     |
 
 ---
 
-## ⏳ 1. Time Period Classification (Main Task)
+## Machine Learning Tasks
+
+The project includes four main tasks:
+
+### 1. Time Period Classification (Main Task)
 
 **Goal:**  
 Classify fossils into their correct geological time period (e.g., Cambrian, Ordovician).
 
 **Models Used:**
-- 🌳 Decision Tree (Baseline)
-- 🌲 Random Forest (Advanced)
+- Decision Tree (Baseline)
+- Random Forest (Advanced)
 
 **Results:**
-- Decision Tree: **97.7%**
-- Random Forest: **98.4%**
+- Decision Tree: 97.7%  
+- Random Forest: 98.4%  
 
 ---
 
-## 🌍 2. Country Prediction
+### Model Comparison (Latest Update)
 
-**Goal:**  
-Predict the country where the fossil was found based on its characteristics.
+To better understand the impact of features, two versions of the model were built:
 
-**Approach:**
-- Supervised classification using features like taxonomy and environment
+#### Model A (With Taxonomy Features)
+Includes all features such as genus, family, and order.
+
+- Decision Tree: 97.7%  
+- Random Forest: 98.5%  
+
+#### Model B (Without Taxonomy Features)
+Removes genus, family, and order.
+
+- Decision Tree: 96.5%  
+- Random Forest: 97.4%  
 
 **Insight:**
-- Fossil distribution is influenced by geological and environmental conditions
+Taxonomic features significantly improve model performance. However, even without these features, the model still achieves strong accuracy, indicating that environmental and geographical features also contribute to prediction.
 
 ---
 
-## 📈 3. Age Prediction (Regression)
+### 2. Country Prediction
 
 **Goal:**  
-Predict the numerical age of the fossil (in millions of years).
+Predict the country where the fossil was found.
 
-**Approach:**
-- Regression models using geological and environmental features
-
-**Output:**
-- Continuous value (e.g., 450 MYA)
+**Approach:**  
+Supervised classification using taxonomy and environmental features.
 
 ---
 
-## 🌊 4. Clustering (Unsupervised Learning)
+### 3. Age Prediction (Regression)
 
 **Goal:**  
-Group trilobites into clusters based on similarity.
+Predict the fossil age in millions of years.
 
-**Approach:**
-- K-Means clustering
-
-**Insight:**
-- Identifies natural groupings based on ecological and biological traits
+**Approach:**  
+Regression models using geological and environmental data.
 
 ---
 
-## 📈 Key Insights
+### 4. Clustering
 
-- Biological features strongly correlate with geological time periods  
+**Goal:**  
+Group trilobites based on similarity.
+
+**Approach:**  
+K-Means clustering.
+
+---
+
+## Key Insights
+
+- Biological features are strongly correlated with geological time periods  
 - Environmental factors help explain fossil distribution  
 - Removing time-related features prevented data leakage  
-- Dataset contains class imbalance (e.g., fewer Permian samples)  
+- The dataset contains class imbalance (e.g., fewer Permian samples)  
 
 ---
 
-## ⚠️ Challenges
+## Challenges
 
--  Imbalanced dataset  
--  Potential data leakage   
-
----
-
-##  Conclusion
-
-This project demonstrates how machine learning can be used to analyze fossil data and reveal patterns about ancient life on Earth.
+- Imbalanced dataset  
+- Potential data leakage  
 
 ---
 
-##  Future Work
+## Conclusion
 
-- Improve models using feature selection  
+This project demonstrates how machine learning can be used to analyze fossil data and uncover patterns about ancient life on Earth.
+
+---
+
+## Future Work
+
+- Improve performance using feature selection  
 - Handle class imbalance  
-- Build interactive dashboard  
+- Build an interactive dashboard  
 - Deploy models  
 
 ---
 
-## ⭐ Project Highlights
+## Project Highlights
 
-✔ Multiple ML Tasks  
-✔ Real Scientific Dataset  
-✔ Data Cleaning & Leakage Handling  
-✔ Model Comparison  
+- Multiple machine learning tasks  
+- Real scientific dataset  
+- Data preprocessing and leakage handling  
+- Model comparison and evaluation  
+
+---
+
+## Dataset
+
+https://www.kaggle.com/datasets/kayleefranklin/predict-the-trilobite-fossil-age
 
 ---
 
 <p align="center">
-  💙 Built with passion for AI & Data Science
+  Built with a focus on data analysis and machine learning
 </p>
-## 🚀 Project Objectives
-
-
-## Dataset: 
-https://www.kaggle.com/datasets/kayleefranklin/predict-the-age-of-a-trilobite
