@@ -2,120 +2,141 @@
 # 🦠 Predict the Age of a Trilobite Fossil  
 
 <p align="center">
-  <img src="images/trilobites.jpg" width="700">
+  <img src="images/trilobites.jpg" width="850">
 </p>
 
-This project explores the use of machine learning to estimate the geological age of trilobite fossils. By leveraging biological taxonomy, geographical information, and paleo-environmental features, we aim to build predictive models that classify fossils into their correct geological time periods.
+<p align="center">
+  <b>Using Machine Learning to Decode Earth's Ancient Life 🌍</b>
+</p>
+
+---
+
+## 🚀 Overview
+
+This project explores how machine learning can be applied to paleontological data to understand and predict the geological age of trilobite fossils.
+
+By analyzing biological, environmental, and geological features, we build models capable of classifying fossils into their correct **geological time periods**.
 
 ---
 
 ## 🐚 What Were Trilobites?
 
+Trilobites were ancient marine arthropods that lived hundreds of millions of years ago.
 
-::contentReference[oaicite:0]{index=0}
-
-
-Trilobites were ancient marine arthropods, related to modern-day insects and crustaceans. They are among the earliest and most successful life forms in Earth's history.
-
-- 🕰 **First Appearance:** ~521 million years ago (Cambrian Period)  
-- 💀 **Extinction:** ~251 million years ago (End-Permian mass extinction)  
+- 🕰 **First Appearance:** ~521 million years ago (Cambrian)  
+- 💀 **Extinction:** ~251 million years ago (Permian extinction)  
 - 🌊 **Habitat:** Marine environments  
-- 🍽 **Diet:** Predators, scavengers, and filter feeders  
+- 🍽 **Diet:** Predators, scavengers, filter feeders  
 
 ---
 
-## 🔍 Physical Structure
+## 🔬 Fossil Formation
 
-Trilobites had a unique segmented body divided into three main parts:
+Trilobites are known today through fossils formed via:
 
-- 🧠 **Cephalon (Head):** Contains eyes and sensory organs  
-- 🧩 **Thorax (Body):** Multiple flexible segments  
-- 🔚 **Pygidium (Tail):** Rear part of the body  
+- 🟤 Compression  
+- 🟡 Mineral Replacement  
+- ⚫ Mold & Cast  
 
----
-
-## 🪨 What is a Trilobite Fossil?
-
-
-::contentReference[oaicite:1]{index=1}
-
-
-A trilobite fossil is the preserved remains or impression of a trilobite in rock.
-
-### Common fossilization processes:
-- 🟤 **Compression:** The organism is flattened in sediment  
-- 🟡 **Mineral Replacement:** Original material replaced by minerals  
-- ⚫ **Mold & Cast:** Shape preserved in surrounding rock  
-
-These fossils help scientists understand ancient ecosystems and evolutionary changes.
+These fossils preserve key biological and environmental information.
 
 ---
 
 ## 📊 Dataset Overview
 
-The dataset contains **29,039 fossil records** collected from different geological periods and global locations.
+- 📁 **Total Records:** 29,039  
+- 🌍 **Global Coverage:** Multiple countries and geological formations  
+- 🧬 **Rich Features:** Taxonomy, environment, geology, and location  
 
-### 🔑 Key Feature Categories:
+### 🔑 Key Features:
 
-- 🧬 **Taxonomy:**  
-  *order, family, genus, species*
-
-- 🌍 **Geography:**  
-  *country, state, latitude, longitude*
-
-- 🪨 **Geology:**  
-  *formation, lithology, stratigraphy_scale*
-
-- 🌊 **Ecology & Biology:**  
-  *environment, diet, vision, life_habit*
-
-- ⏳ **Time Information:**  
-  *time_period (target variable)*  
+| Category | Examples |
+|--------|--------|
+| 🧬 Taxonomy | order, family, genus |
+| 🌍 Geography | country, latitude, longitude |
+| 🌊 Ecology | environment, diet, vision |
+| 🪨 Geology | lithology, formation |
+| ⏳ Time | time_period (target) |
 
 ---
 
-## 🚀 Project Objectives
+## 🎯 Project Tasks
 
-We applied machine learning techniques to solve multiple tasks:
+We applied multiple ML tasks:
 
-- 🌍 **Country Classification**  
-- ⏳ **Time Period Classification**  
-- 🌊 **Environment Clustering**  
-- 📈 **Age Prediction (Regression)**  
-
----
-
-## 🧠 Machine Learning Models
-
-For the **Time Period Classification** task:
-
-- 🌳 **Baseline Model:** Decision Tree  
-- 🌲 **Advanced Model:** Random Forest  
-
-📊 The Random Forest model achieved higher accuracy due to its ability to reduce overfitting and capture complex patterns.
+- 🌍 Country Classification  
+- ⏳ **Time Period Classification (Main Focus)**  
+- 🌊 Environment Clustering  
+- 📈 Age Prediction (Regression)  
 
 ---
 
-## 📈 Key Insights
+## 🤖 Machine Learning Models
 
-- Trilobite characteristics strongly relate to geological time periods  
-- Biological features such as *order* and *family* are highly informative  
-- Environmental and geological data help improve classification accuracy  
-- Some features initially caused overly high accuracy and were removed to avoid data leakage  
+For **Time Period Classification**:
+
+| Model | Type | Purpose |
+|------|------|--------|
+| 🌳 Decision Tree | Baseline | Fast & interpretable |
+| 🌲 Random Forest | Advanced | Higher accuracy & stability |
 
 ---
 
-## 🎯 Project Goal
+## 📈 Results
 
-The goal of this project is to:
+| Model | Accuracy |
+|------|--------|
+| 🌳 Decision Tree | 97.7% |
+| 🌲 Random Forest | 98.4% |
 
-> Understand how biological, environmental, and geological features influence fossil age and classification, and build accurate predictive models based on these relationships.
+✔ Random Forest outperformed the baseline by reducing overfitting and capturing complex patterns.
+
+---
+
+## 🧠 Key Insights
+
+- Trilobite biological features strongly correlate with geological time periods  
+- Environmental and geological conditions help determine fossil age  
+- Removing time-related features prevented data leakage and improved model reliability  
+- Class imbalance affected minority classes such as Permian  
+
+---
+
+## ⚠️ Data Challenges
+
+- 📉 Imbalanced classes (e.g., Permian has fewer samples)  
+- 🔍 Potential data leakage from geological features  
+- 🧩 High-dimensional data after encoding  
 
 ---
 
 ## 🏁 Conclusion
 
-This project demonstrates how machine learning can be applied to paleontology data to uncover patterns in ancient life and improve our understanding of Earth's history.
+This project demonstrates how machine learning can uncover hidden patterns in ancient fossil data and contribute to understanding Earth's evolutionary history.
+
+---
+
+## 💡 Future Work
+
+- Improve performance using feature selection  
+- Handle class imbalance using resampling techniques  
+- Build interactive dashboard (Streamlit)  
+- Deploy model for real-world predictions  
+
+---
+
+## ⭐ Project Highlights
+
+✔ Clean Data Preprocessing  
+✔ Data Leakage Handling  
+✔ Model Comparison  
+✔ Real-world scientific dataset  
+
+---
+
+<p align="center">
+  💙 Built with passion for AI & Data Science
+</p>
 ## 🚀 Project Objectives
 
 This project applies both supervised and unsupervised machine learning techniques to analyze trilobite fossil data and extract meaningful insights:
