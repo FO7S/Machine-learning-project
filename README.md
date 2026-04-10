@@ -1,6 +1,10 @@
 # 🧠 Machine Learning Project  
 # 🦠 Predict the Age of a Trilobite Fossil  
 
+<p align="center">
+  <img src="images/trilobites.jpg" width="700">
+</p>
+
 This project explores the use of machine learning to estimate the geological age of trilobite fossils. By leveraging biological taxonomy, geographical information, and paleo-environmental features, we aim to build predictive models that classify fossils into their correct geological time periods.
 
 ---
