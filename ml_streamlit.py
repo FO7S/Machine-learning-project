@@ -411,9 +411,10 @@ PALETTE_CONT = [AMBER, TEAL, "#E67E22", "#7B68EE", GREEN, RED, AMBER2, "#EC407A"
 def load_raw():
     url = "https://raw.githubusercontent.com/alkhurayjah/Machine-learning-project/main/trilobite.csv"
     try:
-        return pd.read_csv(url)
+        df = pd.read_csv(url)
     except Exception:
-        return pd.read_csv("trilobite.csv")
+        df = pd.read_csv("/mnt/user-data/uploads/trilobite__1_.csv")
+    return df
 
 @st.cache_data
 def build_preprocessed(df_raw):
@@ -451,7 +452,7 @@ with st.sidebar:
     <div class="sidebar-brand">
         <span class="fossil-icon">🦕</span>
         <h2>Trilobite<br/>Fossil Intelligence</h2>
-        <div class="sub">ML Project · 2026</div>
+        <div class="sub">ML Project · 2025</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -868,26 +869,34 @@ elif tab == "🌍  Country Prediction":
     <div class="page-hero">
         <h1>🌍 Country / Continent Prediction</h1>
         <p>Predicting the continental origin of a trilobite fossil using biological and environmental features.
-           Countries were grouped into continents to reduce sparsity and improve model performance.</p>
+           Countries were mapped to continents and three models were benchmarked:
+           Random Forest, XGBoost, and Logistic Regression.</p>
         <div class="hero-period-badges">
             <span class="period-badge">Random Forest</span>
+            <span class="period-badge">XGBoost ★ Best</span>
             <span class="period-badge">Logistic Regression</span>
-            <span class="period-badge">9 Continents</span>
-            <span class="period-badge">Class-Balanced</span>
+            <span class="period-badge">7 Continents</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    rf_acc_country  = 0.9569498069498069
-    lr_acc_country  = 0.876061776061776
+    # ── True results from new notebook ──
+    rf_acc_country  = 0.89170373235351
+    xgb_acc_country = 0.9642235544382131
+    lr_acc_country  = 0.9021465867337072
+
+    rf_f1_country   = 0.89
+    xgb_f1_country  = 0.96
+    lr_f1_country   = 0.90
 
     c1, c2, c3, c4 = st.columns(4)
     for col, val, label, sub in zip(
         [c1, c2, c3, c4],
-        [f"{rf_acc_country*100:.1f}%", f"{lr_acc_country*100:.1f}%",
-         f"{(rf_acc_country - lr_acc_country)*100:.1f}%", "Balanced"],
-        ["Random Forest", "Logistic Regression", "RF Advantage", "Class Weighting"],
-        ["best model", "baseline", "vs LR", "both models"]
+        [f"{xgb_acc_country*100:.1f}%", f"{rf_acc_country*100:.1f}%",
+         f"{lr_acc_country*100:.1f}%",
+         f"{(xgb_acc_country - rf_acc_country)*100:.1f}%"],
+        ["XGBoost ★ Best", "Random Forest", "Logistic Regression", "XGB Advantage"],
+        ["best model", "n_estimators=200", "max_iter=1000", "over RF"]
     ):
         col.markdown(f"""<div class="metric-card">
             <div class="m-label">{label}</div>
@@ -897,49 +906,50 @@ elif tab == "🌍  Country Prediction":
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── Model Comparison Bar ──
-    st.markdown('<div class="section-header"><h3>Model Accuracy Comparison</h3></div>', unsafe_allow_html=True)
+    # ── Comparison bars + per-class heatmap ──
+    st.markdown('<div class="section-header"><h3>Model Accuracy & F1 Comparison</h3><p>RF vs XGBoost vs Logistic Regression — 7 Continents</p></div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns([3, 2])
     with col1:
-        fig, ax = plt.subplots(figsize=(6, 4))
-        models_c = ["Random Forest", "Logistic Regression"]
-        accs_c   = [rf_acc_country, lr_acc_country]
-        bars = ax.bar(models_c, accs_c, color=[AMBER, TEAL],
-                      edgecolor=STONE, linewidth=1.2, width=0.45)
-        ax.set_ylim(0.0, 1.05)
-        ax.set_ylabel("Accuracy")
-        ax.set_title("Continent Prediction — Model Comparison", fontweight="bold")
-        for bar, val in zip(bars, accs_c):
-            ax.text(bar.get_x() + bar.get_width()/2, val + 0.01,
-                    f"{val:.3f}", ha="center", va="bottom", fontsize=10,
-                    color=AMBER2, fontweight="bold")
-        ax.axhline(0.5, color=DUST, linestyle=":", linewidth=1, alpha=0.6, label="Random Chance")
-        ax.legend(fontsize=8)
-        ax.grid(axis="y", alpha=0.4)
+        fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+        models_c  = ["Random\nForest", "XGBoost\n★ Best", "Logistic\nRegression"]
+        accs_c    = [rf_acc_country, xgb_acc_country, lr_acc_country]
+        f1s_c     = [rf_f1_country, xgb_f1_country, lr_f1_country]
+        bar_cols_c = [DUST, AMBER, TEAL]
+
+        for ax_i, vals, title, ylabel in [
+            (axes[0], accs_c, "Accuracy",         "Accuracy"),
+            (axes[1], f1s_c,  "F1 Score (weighted)", "F1 Score"),
+        ]:
+            bars = ax_i.bar(models_c, vals, color=bar_cols_c, edgecolor=STONE, linewidth=1.2, width=0.5)
+            ax_i.set_ylim(0.75, 1.02)
+            ax_i.set_ylabel(ylabel)
+            ax_i.set_title(title, fontweight="bold")
+            for bar, v in zip(bars, vals):
+                ax_i.text(bar.get_x() + bar.get_width()/2, v + 0.003,
+                          f"{v:.3f}", ha="center", va="bottom", fontsize=8.5,
+                          color=AMBER2, fontweight="bold")
+            ax_i.grid(axis="y", alpha=0.4)
         fig.tight_layout()
         st.pyplot(fig)
         plt.close()
 
     with col2:
-        # Per-class F1 heatmap
         class_metrics = {
-            "Africa":        {"RF_F1": 0.93, "LR_F1": 0.64},
-            "Antarctica":    {"RF_F1": 0.75, "LR_F1": 0.83},
-            "Asia":          {"RF_F1": 0.96, "LR_F1": 0.90},
-            "Europe":        {"RF_F1": 0.95, "LR_F1": 0.84},
-            "Middle East":   {"RF_F1": 0.44, "LR_F1": 0.18},
-            "North America": {"RF_F1": 0.97, "LR_F1": 0.94},
-            "Oceania":       {"RF_F1": 0.90, "LR_F1": 0.82},
-            "Other":         {"RF_F1": 0.92, "LR_F1": 0.75},
-            "South America": {"RF_F1": 0.84, "LR_F1": 0.68},
+            "Africa":        {"RF": 0.50, "XGB": 0.84, "LR": 0.59},
+            "Antarctica":    {"RF": 0.00, "XGB": 0.86, "LR": 0.00},
+            "Asia":          {"RF": 0.90, "XGB": 0.97, "LR": 0.91},
+            "Europe":        {"RF": 0.87, "XGB": 0.95, "LR": 0.88},
+            "North America": {"RF": 0.93, "XGB": 0.98, "LR": 0.95},
+            "Oceania":       {"RF": 0.71, "XGB": 0.95, "LR": 0.79},
+            "South America": {"RF": 0.94, "XGB": 0.98, "LR": 0.92},
         }
         cm_df = pd.DataFrame(class_metrics).T
-        fig, ax = plt.subplots(figsize=(5, 4.5))
+        fig, ax = plt.subplots(figsize=(5.5, 4.5))
         sns.heatmap(cm_df, annot=True, fmt=".2f", cmap="YlOrBr",
-                    ax=ax, vmin=0.1, vmax=1.0, linewidths=0.5, linecolor=STONE,
+                    ax=ax, vmin=0.0, vmax=1.0, linewidths=0.5, linecolor=STONE,
                     cbar_kws={"shrink": 0.6})
-        ax.set_title("F1 per Continent — RF vs LR", fontsize=9, fontweight="bold")
+        ax.set_title("F1 per Continent — All 3 Models", fontsize=9, fontweight="bold")
         ax.tick_params(axis='x', rotation=20, labelsize=8)
         ax.tick_params(axis='y', rotation=0, labelsize=7.5)
         fig.tight_layout()
@@ -948,32 +958,33 @@ elif tab == "🌍  Country Prediction":
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── Continent Distribution ──
-    st.markdown('<div class="section-header"><h3>Fossil Distribution by Continent</h3></div>', unsafe_allow_html=True)
-    col3, col4 = st.columns(2)
+    # ── Continent Distribution + Radar ──
+    st.markdown('<div class="section-header"><h3>Fossil Distribution by Continent & Model Radar</h3></div>', unsafe_allow_html=True)
 
+    col3, col4 = st.columns(2)
     with col3:
-        country_to_continent = {
-            "US":"North America","CA":"North America","MX":"North America","GT":"North America",
+        country_to_continent_new = {
+            "US":"North America","CA":"North America","MX":"North America","GT":"North America","GL":"North America",
             "AR":"South America","BR":"South America","CO":"South America","VE":"South America","PY":"South America",
             "UK":"Europe","IE":"Europe","FR":"Europe","DE":"Europe","ES":"Europe","IT":"Europe",
             "PL":"Europe","CZ":"Europe","AT":"Europe","BE":"Europe","NL":"Europe","LU":"Europe",
             "SE":"Europe","NO":"Europe","FI":"Europe","DK":"Europe","PT":"Europe","EE":"Europe",
-            "LV":"Europe","LT":"Europe","UA":"Europe","BY":"Europe","SI":"Europe","BA":"Europe",
+            "LV":"Europe","LT":"Europe","UA":"Europe","BY":"Europe","SI":"Europe","BA":"Europe","RU":"Europe","SJ":"Europe",
             "CN":"Asia","IN":"Asia","JP":"Asia","KR":"Asia","KP":"Asia","TH":"Asia","VN":"Asia",
             "MY":"Asia","ID":"Asia","IR":"Asia","PK":"Asia","AF":"Asia","KZ":"Asia","UZ":"Asia",
             "TJ":"Asia","KG":"Asia","AZ":"Asia","AM":"Asia","MN":"Asia","LA":"Asia","MM":"Asia",
+            "SA":"Asia","OM":"Asia",
             "MA":"Africa","DZ":"Africa","TN":"Africa","ZA":"Africa","EH":"Africa",
             "AU":"Oceania","NZ":"Oceania",
-            "SA":"Middle East","JO":"Middle East","OM":"Middle East",
-            "AQ":"Antarctica","GL":"North America","SJ":"Europe"
+            "AQ":"Antarctica",
         }
         tmp = df_raw.dropna(subset=["country"]).copy()
-        tmp["continent"] = tmp["country"].map(country_to_continent).fillna("Other")
+        tmp["continent"] = tmp["country"].map(country_to_continent_new).fillna("Other")
         cont_counts = tmp["continent"].value_counts()
+
         fig, ax = plt.subplots(figsize=(6, 5))
+        colors_pie = [AMBER, TEAL, RED, GREEN, "#7B68EE", AMBER2, "#EC407A", DUST]
         wedge_props = dict(width=0.55, edgecolor=STONE, linewidth=1.5)
-        colors_pie = [AMBER, TEAL, RED, GREEN, "#7B68EE", AMBER2, "#EC407A", DUST, "#9B59B6"]
         wedges, texts, autotexts = ax.pie(
             cont_counts.values, labels=cont_counts.index,
             autopct='%1.1f%%', startangle=140,
@@ -981,37 +992,54 @@ elif tab == "🌍  Country Prediction":
             wedgeprops=wedge_props, textprops={"color": BONE, "fontsize": 7.5}
         )
         for at in autotexts:
-            at.set_color(STONE)
-            at.set_fontsize(7)
-            at.set_fontweight("bold")
+            at.set_color(STONE); at.set_fontsize(7); at.set_fontweight("bold")
         ax.set_title("Fossil Records by Continent", fontweight="bold")
         fig.tight_layout()
         st.pyplot(fig)
         plt.close()
 
     with col4:
-        fig, ax = plt.subplots(figsize=(6, 5))
-        x = np.arange(len(cont_counts))
-        bars = ax.bar(x, cont_counts.values,
-                      color=colors_pie[:len(cont_counts)],
-                      edgecolor=STONE, linewidth=1)
-        ax.set_xticks(x)
-        ax.set_xticklabels(cont_counts.index, rotation=35, ha="right", fontsize=7.5)
-        ax.set_ylabel("Number of Fossils")
-        ax.set_title("Continent-wise Fossil Count", fontweight="bold")
-        for bar, val in zip(bars, cont_counts.values):
-            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 30,
-                    f"{val:,}", ha="center", va="bottom", fontsize=7, color=AMBER2)
-        ax.grid(axis="y", alpha=0.35)
+        categories_r = ["Accuracy", "F1\n(weighted)", "Africa\nF1", "Asia\nF1", "N.America\nF1"]
+        N = len(categories_r)
+        angles = [n / float(N) * 2 * np.pi for n in range(N)]
+        angles += angles[:1]
+
+        rf_vals  = [rf_acc_country,  0.89, 0.50, 0.90, 0.93]
+        xgb_vals = [xgb_acc_country, 0.96, 0.84, 0.97, 0.98]
+        lr_vals  = [lr_acc_country,  0.90, 0.59, 0.91, 0.95]
+
+        fig, ax = plt.subplots(figsize=(5.5, 5), subplot_kw=dict(polar=True))
+        ax.set_facecolor(ROCK)
+        fig.patch.set_facecolor(STONE)
+
+        for vals, color, label, lw in [
+            (rf_vals,  DUST,  "Random Forest", 1.5),
+            (xgb_vals, AMBER, "XGBoost ★",     2.5),
+            (lr_vals,  TEAL,  "Logistic Reg.", 1.5),
+        ]:
+            vp = vals + vals[:1]
+            ax.plot(angles, vp, 'o-', linewidth=lw, color=color, label=label, alpha=0.9)
+            ax.fill(angles, vp, alpha=0.08, color=color)
+
+        ax.set_xticks(angles[:-1])
+        ax.set_xticklabels(categories_r, color=BONE, fontsize=8)
+        ax.set_ylim(0, 1)
+        ax.tick_params(colors=DUST)
+        ax.set_title("Model Radar — Continent Prediction", color=AMBER, fontsize=10, pad=18)
+        ax.legend(loc='lower right', bbox_to_anchor=(1.35, -0.05), fontsize=7.5,
+                  framealpha=0.3, edgecolor=DUST)
+        ax.yaxis.grid(True, color=SLATE, linewidth=0.5)
+        ax.xaxis.grid(True, color=SLATE, linewidth=0.5)
         fig.tight_layout()
         st.pyplot(fig)
         plt.close()
 
     st.markdown("""
     <div class="insight-card"><div class="tag">Key Conclusion</div>
-    <p>Random Forest dominates Logistic Regression by ~8% in overall accuracy. The "Middle East" class
-    is hardest to predict (F1: 0.44 for RF) due to very few samples. North America, Asia, and Europe
-    are predicted with very high confidence — reflecting the well-represented nature of fossils from these regions.</p>
+    <p><strong>XGBoost</strong> is the clear winner with <strong>96.4% accuracy</strong> and balanced F1 across all continents.
+    Random Forest struggled most — especially with Africa (F1: 0.50) and Antarctica (F1: 0.00) due to class imbalance.
+    XGBoost handles minority classes far better, delivering strong results even on rare classes like Antarctica (F1: 0.86).
+    Logistic Regression lands in between at 90.2%, providing a solid linear baseline.</p>
     </div>""", unsafe_allow_html=True)
 
 
@@ -1023,11 +1051,11 @@ elif tab == "⏳  Age Prediction":
     <div class="page-hero">
         <h1>⏳ Age Prediction</h1>
         <p>Predicting the average geological age (in millions of years) of a trilobite fossil
-           using 63 carefully selected features from 4 feature selection methods.
-           Five regression models were benchmarked head-to-head.</p>
+           using 59 carefully selected features from 4 feature selection methods.
+           Five regression models were benchmarked — Random Forest takes the crown on R².</p>
         <div class="hero-period-badges">
             <span class="period-badge">Linear Regression</span>
-            <span class="period-badge">Random Forest</span>
+            <span class="period-badge">Random Forest ★</span>
             <span class="period-badge">XGBoost</span>
             <span class="period-badge">Extra Trees</span>
             <span class="period-badge">SVR</span>
@@ -1035,13 +1063,13 @@ elif tab == "⏳  Age Prediction":
     </div>
     """, unsafe_allow_html=True)
 
-    # ── True results from notebook ──
+    # ── UPDATED results from new notebook ──
     results = {
-        "Linear Regression": {"MAE": 21.122, "RMSE": 31.792, "R2": 0.5756},
-        "Random Forest":     {"MAE": 2.782,  "RMSE": 11.335, "R2": 0.9461},
-        "XGBoost":           {"MAE": 6.218,  "RMSE": 12.812, "R2": 0.9311},
-        "Extra Trees":       {"MAE": 2.358,  "RMSE": 11.934, "R2": 0.9402},
-        "SVR":               {"MAE": 5.922,  "RMSE": 16.770, "R2": 0.8819},
+        "Linear Regression": {"MAE": 25.842, "RMSE": 36.512, "R2": 0.4402},
+        "Random Forest":     {"MAE": 3.177,  "RMSE": 11.280, "R2": 0.9466},
+        "XGBoost":           {"MAE": 6.396,  "RMSE": 12.634, "R2": 0.9330},
+        "Extra Trees":       {"MAE": 2.947,  "RMSE": 12.450, "R2": 0.9349},
+        "SVR":               {"MAE": 6.677,  "RMSE": 17.458, "R2": 0.8720},
     }
     best_model = "Random Forest"
 
@@ -1062,21 +1090,21 @@ elif tab == "⏳  Age Prediction":
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── COMPARISON TABLE + R2 BAR ──
-    st.markdown('<div class="section-header"><h3>Model Performance Comparison</h3><p>All 5 models benchmarked on held-out test set (20%)</p></div>', unsafe_allow_html=True)
+    # ── COMPARISON TABLE + R2/MAE bars ──
+    st.markdown('<div class="section-header"><h3>Model Performance Comparison</h3><p>All 5 models benchmarked on held-out test set (20%) — updated results</p></div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns([2, 3])
     with col1:
-        table_html = """<div class="comp-table-wrap"><table>
-        <tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th></tr>"""
+        table_html = '''<div class="comp-table-wrap"><table>
+        <tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th></tr>'''
         for name, m in sorted(results.items(), key=lambda x: -x[1]["R2"]):
             best_cls = "best-row winner" if name == best_model else ""
             star = " ★" if name == best_model else ""
-            table_html += f"""<tr class="{best_cls}">
+            table_html += f'''<tr class="{best_cls}">
             <td>{name}{star}</td>
-            <td>{m['MAE']:.3f}</td>
-            <td>{m['RMSE']:.3f}</td>
-            <td>{m['R2']:.4f}</td></tr>"""
+            <td>{m["MAE"]:.3f}</td>
+            <td>{m["RMSE"]:.3f}</td>
+            <td>{m["R2"]:.4f}</td></tr>'''
         table_html += "</table></div>"
         st.markdown(table_html, unsafe_allow_html=True)
 
@@ -1088,19 +1116,17 @@ elif tab == "⏳  Age Prediction":
 
         fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.5))
 
-        # R2 bars
         bars = axes[0].bar(range(len(names)), r2s, color=bar_c, edgecolor=STONE, linewidth=1)
         axes[0].set_xticks(range(len(names)))
         axes[0].set_xticklabels([n.replace(" ", "\n") for n in names], fontsize=7)
-        axes[0].set_ylim(0.5, 1.0)
+        axes[0].set_ylim(0.35, 1.0)
         axes[0].set_ylabel("R² Score")
         axes[0].set_title("R² — Higher is Better", fontweight="bold")
         for bar, val in zip(bars, r2s):
-            axes[0].text(bar.get_x() + bar.get_width()/2, val + 0.005,
+            axes[0].text(bar.get_x() + bar.get_width()/2, val + 0.008,
                          f"{val:.3f}", ha="center", fontsize=7, color=AMBER2)
         axes[0].grid(axis="y", alpha=0.35)
 
-        # MAE bars
         bars2 = axes[1].bar(range(len(names)), maes, color=bar_c, edgecolor=STONE, linewidth=1)
         axes[1].set_xticks(range(len(names)))
         axes[1].set_xticklabels([n.replace(" ", "\n") for n in names], fontsize=7)
@@ -1117,7 +1143,7 @@ elif tab == "⏳  Age Prediction":
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── COMPARISON: Actual vs Predicted (simulated) ──
+    # ── Actual vs Predicted — all 5 models ──
     st.markdown('<div class="section-header"><h3>Actual vs Predicted — All Models</h3><p>Simulated comparison based on reported R² and MAE values from the notebook</p></div>', unsafe_allow_html=True)
 
     np.random.seed(42)
@@ -1130,7 +1156,6 @@ elif tab == "⏳  Age Prediction":
     def simulate_pred(y_true, r2_target, mae_target):
         noise_std = mae_target * 1.5
         pred = y_true + np.random.normal(0, noise_std, len(y_true))
-        # blend toward perfect
         blend = r2_target ** 2
         return blend * y_true + (1 - blend) * pred
 
@@ -1139,8 +1164,8 @@ elif tab == "⏳  Age Prediction":
     fig, axes = plt.subplots(1, len(names), figsize=(16, 3.5))
     for i, name in enumerate(names):
         ax = axes[i]
-        y_pred = model_preds[name]
-        ax.scatter(y_actual, y_pred, alpha=0.35, s=15,
+        y_pred_sim = model_preds[name]
+        ax.scatter(y_actual, y_pred_sim, alpha=0.35, s=15,
                    color=AMBER if name == best_model else TEAL if results[name]["R2"] > 0.93 else DUST)
         mn, mx = y_actual.min(), y_actual.max()
         ax.plot([mn, mx], [mn, mx], 'r--', linewidth=1.5, alpha=0.8)
@@ -1151,19 +1176,15 @@ elif tab == "⏳  Age Prediction":
         ax.set_xlabel("Actual Age (Mya)", fontsize=7)
         ax.grid(alpha=0.25)
         if name == best_model:
-            ax.spines['bottom'].set_color(AMBER)
-            ax.spines['left'].set_color(AMBER)
-            ax.spines['top'].set_color(AMBER)
-            ax.spines['right'].set_color(AMBER)
             for sp in ax.spines.values():
-                sp.set_linewidth(1.5)
+                sp.set_color(AMBER); sp.set_linewidth(1.5)
     fig.tight_layout()
     st.pyplot(fig)
     plt.close()
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── RESIDUAL COMPARISON ──
+    # ── Residual comparison ──
     st.markdown('<div class="section-header"><h3>Residual Analysis Comparison</h3><p>Error distribution across all 5 models</p></div>', unsafe_allow_html=True)
 
     fig, axes = plt.subplots(1, len(names), figsize=(16, 3.2))
@@ -1185,7 +1206,7 @@ elif tab == "⏳  Age Prediction":
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── SPIDER / RADAR CHART ──
+    # ── Radar Chart ──
     st.markdown('<div class="section-header"><h3>Multi-Metric Radar — Model Profiles</h3></div>', unsafe_allow_html=True)
 
     col3, col4 = st.columns([3, 2])
@@ -1193,9 +1214,9 @@ elif tab == "⏳  Age Prediction":
         metrics_norm = {}
         for name, m in results.items():
             r2_n   = m["R2"]
-            mae_n  = 1 - (m["MAE"] / 25)
-            rmse_n = 1 - (m["RMSE"] / 35)
-            metrics_norm[name] = [r2_n, mae_n, rmse_n, (r2_n + mae_n + rmse_n) / 3]
+            mae_n  = 1 - (m["MAE"] / 30)
+            rmse_n = 1 - (m["RMSE"] / 40)
+            metrics_norm[name] = [r2_n, max(0, mae_n), max(0, rmse_n), (r2_n + max(0,mae_n) + max(0,rmse_n)) / 3]
 
         categories_r = ["R² Score", "MAE\n(inverted)", "RMSE\n(inverted)", "Overall"]
         N = len(categories_r)
@@ -1239,15 +1260,15 @@ elif tab == "⏳  Age Prediction":
             <div>
                 <span class="best-model-stat">
                     <span class="s-label">R² Score</span>
-                    <span class="s-val">0.9461</span>
+                    <span class="s-val">0.9466</span>
                 </span>
                 <span class="best-model-stat">
                     <span class="s-label">MAE</span>
-                    <span class="s-val">2.78 Mya</span>
+                    <span class="s-val">3.18 Mya</span>
                 </span>
                 <span class="best-model-stat">
                     <span class="s-label">RMSE</span>
-                    <span class="s-val">11.33 Mya</span>
+                    <span class="s-val">11.28 Mya</span>
                 </span>
                 <span class="best-model-stat">
                     <span class="s-label">Rank</span>
@@ -1256,44 +1277,45 @@ elif tab == "⏳  Age Prediction":
             </div>
             <br/>
             <p style="font-size:0.8rem; color:#8A7B65; line-height:1.7;">
-                Random Forest (300 estimators) achieves the highest R² and second-best MAE
-                among all models. It outperforms Extra Trees on R² while Extra Trees edges it
-                slightly on raw MAE. XGBoost and SVR trail behind, with Linear Regression
-                being a poor fit for this non-linear geological problem.
+                Random Forest (300 estimators) achieves the highest R² = 0.9466,
+                confirming it as the best overall model. Extra Trees edges it on raw MAE
+                (2.95 vs 3.18) but falls behind on R² (0.9349). XGBoost and SVR trail
+                further, while Linear Regression performs poorly (R²=0.44) on this
+                non-linear geological regression problem.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
 
-    # ── FEATURE SELECTION SUMMARY ──
-    st.markdown('<div class="section-header"><h3>Feature Selection Pipeline — 63 Features Selected</h3><p>4 methods were applied: SelectKBest, Mutual Information, Random Forest Importance, RFE</p></div>', unsafe_allow_html=True)
+    # ── Feature Selection Summary (updated: 59 features, not 63) ──
+    st.markdown('<div class="section-header"><h3>Feature Selection Pipeline — 59 Features Selected</h3><p>4 methods applied: SelectKBest, Mutual Information, Random Forest Importance, RFE. early_interval columns were removed in this version.</p></div>', unsafe_allow_html=True)
 
     top_features_selected = [
-        ("diet_deposit feeder", 4, 11.0),
-        ("early_interval_Delamaran", 4, 13.5),
-        ("preservation_mode_cast,mold/impression", 4, 13.75),
-        ("early_interval_Givetian", 4, 15.25),
-        ("diet_carnivore", 4, 15.5),
-        ("early_interval_Late Famennian", 4, 17.0),
-        ("early_interval_Eifelian", 4, 18.75),
-        ("early_interval_Guzhangian", 4, 19.25),
-        ("country_DE", 4, 20.0),
-        ("country_CZ", 3, 22.0),
-        ("life_habit_low-level epifaunal", 3, 24.5),
-        ("country_CN", 3, 25.0),
-        ("environment_slope", 3, 27.0),
-        ("stratigraphy_scale_bed", 3, 28.5),
-        ("early_interval_Pragian", 3, 30.0),
+        ("longitude",                                   4, 11.0),
+        ("diet_deposit feeder",                         4, 11.0),
+        ("preservation_mode_cast,mold/impression",      4, 11.5),
+        ("stratigraphy_scale_group of beds",            4, 12.0),
+        ("assembly_composition_Unknown",                4, 12.75),
+        ("assembly_composition_macrofossils,mesofossils", 4, 18.25),
+        ("country_CN",                                  4, 18.25),
+        ("lithology_limestone",                         4, 20.0),
+        ("diet_carnivore",                              3, 22.0),
+        ("country_DE",                                  3, 23.0),
+        ("environment_slope",                           3, 24.5),
+        ("life_habit_low-level epifaunal",              3, 25.0),
+        ("country_CZ",                                  3, 26.0),
+        ("stratigraphy_scale_bed",                      3, 27.0),
+        ("preservation_mode_body",                      3, 29.0),
     ]
 
     feat_df = pd.DataFrame(top_features_selected, columns=["Feature", "Frequency", "Avg Rank"])
     fig, ax = plt.subplots(figsize=(10, 4.5))
     colors_feat = [AMBER if f == 4 else TEAL for f in feat_df["Frequency"]]
-    bars = ax.barh(feat_df["Feature"][::-1], feat_df["Frequency"][::-1],
-                   color=colors_feat[::-1], edgecolor=STONE, linewidth=0.7)
+    ax.barh(feat_df["Feature"][::-1], feat_df["Frequency"][::-1],
+            color=colors_feat[::-1], edgecolor=STONE, linewidth=0.7)
     ax.set_xlabel("Number of Methods that Selected Feature (out of 4)")
-    ax.set_title("Top 15 Selected Features — Frequency Across Selection Methods", fontweight="bold")
+    ax.set_title("Top 15 Selected Features — Frequency Across Selection Methods (59 total)", fontweight="bold")
     legend_patches = [
         mpatches.Patch(color=AMBER, label='Selected by ALL 4 methods'),
         mpatches.Patch(color=TEAL,  label='Selected by 3 methods'),
