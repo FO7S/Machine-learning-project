@@ -1,7 +1,7 @@
 # Predict the Age of a Trilobite Fossil (Machine Learning Project)
 
 <p align="center">
-  <img src="images/trilobites.jpg" width="850">
+  <img src="./trilobites.jpg" width="850">
 </p>
 
 
