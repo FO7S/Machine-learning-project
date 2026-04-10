@@ -73,12 +73,24 @@ Taxonomic features significantly improve model performance. However, even withou
 
 ### 2. Continent Classification Model
 
-**Goal:**  
+**Goal:**
+Predict the continent where a trilobite fossil was found based on geological, biological, and environmental features.
 
+**Approach:**
+The data was preprocessed by converting categorical features (such as time_period) into numerical format using one-hot encoding.
+Country information was mapped into continents, and the target variable was defined as the continent.
 
-**Approach:**  
+Three machine learning models were trained and compared:
 
+* Random Forest: 89%
+* XGBoost: 96%
+* Logistic Regression: 90%
 
+**Insight:**
+XGBoost achieved the best performance, showing strong generalization across all continents. Logistic Regression also performed well, indicating that the dataset contains clear patterns that are relatively easy to separate. Random Forest performed slightly lower, especially on underrepresented classes such as Africa and Oceania.
+
+Additionally, class imbalance (e.g., very few samples for Antarctica) affected the performance of some models.
+ 
 ---
 
 ### 3. Age Prediction 
