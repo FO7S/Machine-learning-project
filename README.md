@@ -1,5 +1,5 @@
-# 🧠 Machine Learning Project  
-# 🦠 Predict the Age of a Trilobite Fossil  
+## 🧠 Machine Learning Project  
+#  Predict the Age of a Trilobite Fossil  
 
 <p align="center">
   <img src="images/trilobites.jpg" width="850">
