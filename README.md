@@ -251,8 +251,8 @@ This project demonstrates how machine learning can be used to analyze fossil dat
 
 ## Contributors
 - Faisal Alsulami
-- Lana  
-- Alaa  
+- Lana Aljuaid
+- Alaa Alshahranni
 - Abdallah  
 
 <p align="center">
