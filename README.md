@@ -253,7 +253,7 @@ This project demonstrates how machine learning can be used to analyze fossil dat
 - Faisal Alsulami
 - Lana Aljuaid
 - Alaa Alshahranni
-- Abdallah  
+- Abdullah Alkhurayjah  
 
 <p align="center">
   Built with a focus on data analysis and machine learning
