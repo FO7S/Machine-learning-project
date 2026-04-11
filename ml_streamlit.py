@@ -1146,20 +1146,17 @@ elif tab == "⏳  Age Prediction":
     # ── Actual vs Predicted — all 5 models ──
     st.markdown('<div class="section-header"><h3>Actual vs Predicted — All Models</h3><p>Simulated comparison based on reported R² and MAE values from the notebook</p></div>', unsafe_allow_html=True)
 
-    np.random.seed(42)
-    n_pts = 300
-    y_actual = np.random.choice(
-        [350, 380, 440, 460, 477, 490, 510, 530],
-        size=n_pts, p=[0.08, 0.07, 0.15, 0.25, 0.2, 0.12, 0.08, 0.05]
-    ).astype(float) + np.random.normal(0, 8, n_pts)
+    import numpy as np
+    array_path = r"C:\Users\faisa\Downloads\array"
+    y_actual = np.load(array_path + r"\y_test_age.npy")
+    model_preds = {
+        "Linear Regression": np.load(array_path + r"\y_pred_baseline.npy"),
+        "Random Forest": np.load(array_path + r"\y_pred_rf.npy"),
+        "XGBoost": np.load(array_path + r"\y_pred_xgb.npy"),
+        "Extra Trees": np.load(array_path + r"\y_pred_et.npy"),
+        "SVR": np.load(array_path + r"\y_pred_svr.npy"),
+    }
 
-    def simulate_pred(y_true, r2_target, mae_target):
-        noise_std = mae_target * 1.5
-        pred = y_true + np.random.normal(0, noise_std, len(y_true))
-        blend = r2_target ** 2
-        return blend * y_true + (1 - blend) * pred
-
-    model_preds = {n: simulate_pred(y_actual, results[n]["R2"], results[n]["MAE"]) for n in names}
 
     fig, axes = plt.subplots(1, len(names), figsize=(16, 3.5))
     for i, name in enumerate(names):
