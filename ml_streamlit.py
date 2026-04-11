@@ -1146,15 +1146,17 @@ elif tab == "⏳  Age Prediction":
     # ── Actual vs Predicted — all 5 models ──
     st.markdown('<div class="section-header"><h3>Actual vs Predicted — All Models</h3><p>Simulated comparison based on reported R² and MAE values from the notebook</p></div>', unsafe_allow_html=True)
 
+    import os
     import numpy as np
-    array_path = r"C:\Users\faisa\Downloads\array"
-    y_actual = np.load(array_path + r"\y_test_age.npy")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    ARRAY_DIR = os.path.join(BASE_DIR, "results")
+    y_actual = np.load(os.path.join(ARRAY_DIR, "y_test_age.npy"))
     model_preds = {
-        "Linear Regression": np.load(array_path + r"\y_pred_baseline.npy"),
-        "Random Forest": np.load(array_path + r"\y_pred_rf.npy"),
-        "XGBoost": np.load(array_path + r"\y_pred_xgb.npy"),
-        "Extra Trees": np.load(array_path + r"\y_pred_et.npy"),
-        "SVR": np.load(array_path + r"\y_pred_svr.npy"),
+        "Linear Regression": np.load(os.path.join(ARRAY_DIR, "y_pred_baseline.npy")),
+        "Random Forest": np.load(os.path.join(ARRAY_DIR, "y_pred_rf.npy")),
+        "XGBoost": np.load(os.path.join(ARRAY_DIR, "y_pred_xgb.npy")),
+        "Extra Trees": np.load(os.path.join(ARRAY_DIR, "y_pred_et.npy")),
+        "SVR": np.load(os.path.join(ARRAY_DIR, "y_pred_svr.npy")),
     }
 
 
