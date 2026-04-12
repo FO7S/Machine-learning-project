@@ -16,6 +16,13 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+st.markdown("""
+<div class="sidebar-brand">
+    <span class="fossil-icon">🦕</span>
+    <h2>Trilobite<br/>Fossil Intelligence</h2>
+    <div class="sub">ML Project · 2026</div>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
@@ -271,7 +278,27 @@ div[data-testid="stRadio"] label:hover {
 }
 
 /* ── TABS ── */
-[data-testid="stTabs"] [data-testid="stMarkdownContainer"] { display: none; }
+button[data-baseweb="tab"] {
+    background: var(--slate) !important;
+    border: 1px solid var(--dust) !important;
+    color: var(--bone) !important;
+    border-radius: 6px 6px 0 0 !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+button[data-baseweb="tab"]:hover {
+    color: var(--amber) !important;
+    border-color: var(--amber) !important;
+}
+
+button[aria-selected="true"] {
+    background: var(--rock) !important;
+    border-bottom: 2px solid var(--amber) !important;
+    color: var(--amber) !important;
+}
 
 /* ── MATPLOTLIB DARK BG ── */
 .stPlotlyChart, .stpyplot { background: transparent !important; }
@@ -363,6 +390,7 @@ div[data-testid="stRadio"] label:hover {
 .comp-table-wrap .best-row td {
     color: var(--amber2) !important;
     font-weight: 600;
+
 }
 .comp-table-wrap .winner { color: var(--amber) !important; font-weight: 700; }
 </style>
@@ -445,38 +473,25 @@ def build_preprocessed(df_raw):
     return df, df_eda
 
 # ─────────────────────────────────────────────
-#  SIDEBAR
+#  TABS
 # ─────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("""
-    <div class="sidebar-brand">
-        <span class="fossil-icon">🦕</span>
-        <h2>Trilobite<br/>Fossil Intelligence</h2>
-        <div class="sub">ML Project · 2026</div>
-    </div>
-    """, unsafe_allow_html=True)
+tabs = st.tabs([
+    "EDA Exploration",
+    "Time Period Classification",
+    "Country Prediction",
+    "Age Prediction",
+    "Clustering",
+    "Raw Data"
+])
 
-    tab = st.radio(
-        "Navigation",
-        options=[
-            "📊  EDA — Exploration",
-            "🗂️  Time Period Classification",
-            "🌍  Country Prediction",
-            "⏳  Age Prediction",
-            "🔵  Clustering",
-            "🗃️  Raw Data",
-        ],
-        label_visibility="collapsed",
-    )
-
-    st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div style="font-size:0.68rem; color:#8A7B65; text-align:center; letter-spacing:0.1em; text-transform:uppercase; padding: 0 0.5rem; line-height:1.8;">
-        Dataset · 29,039 Fossil Records<br/>
-        5 Geological Periods<br/>
-        Kaggle Trilobite Dataset
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown('<div class="gold-divider"></div>', unsafe_allow_html=True)
+st.markdown("""
+<div style="font-size:0.68rem; color:#8A7B65; text-align:center; letter-spacing:0.1em; text-transform:uppercase; padding: 0 0.5rem; line-height:1.8;">
+    Dataset · 29,039 Fossil Records<br/>
+    5 Geological Periods<br/>
+    Kaggle Trilobite Dataset
+</div>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  LOAD DATA
@@ -488,7 +503,7 @@ with st.spinner("Excavating fossil records…"):
 # ══════════════════════════════════════════════
 #  TAB 1 — EDA
 # ══════════════════════════════════════════════
-if tab == "📊  EDA — Exploration":
+with tabs[0]:
     st.markdown("""
     <div class="page-hero">
         <h1>🔍 Exploratory Data Analysis</h1>
@@ -709,10 +724,10 @@ if tab == "📊  EDA — Exploration":
 # ══════════════════════════════════════════════
 #  TAB 2 — TIME PERIOD CLASSIFICATION
 # ══════════════════════════════════════════════
-elif tab == "🗂️  Time Period Classification":
+with tabs[1]:
     st.markdown("""
     <div class="page-hero">
-        <h1>🗂️ Time Period Classification</h1>
+        <h1>⚱️ Time Period Classification</h1>
         <p>Predicting which geological era a trilobite lived in — from Cambrian to Permian —
            using taxonomic and environmental features. Two experimental setups were compared:
            Model A (all features) vs Model B (no taxonomy).</p>
@@ -864,7 +879,7 @@ elif tab == "🗂️  Time Period Classification":
 # ══════════════════════════════════════════════
 #  TAB 3 — COUNTRY PREDICTION
 # ══════════════════════════════════════════════
-elif tab == "🌍  Country Prediction":
+with tabs[2]:
     st.markdown("""
     <div class="page-hero">
         <h1>🌍 Country / Continent Prediction</h1>
@@ -1046,7 +1061,7 @@ elif tab == "🌍  Country Prediction":
 # ══════════════════════════════════════════════
 #  TAB 4 — AGE PREDICTION
 # ══════════════════════════════════════════════
-elif tab == "⏳  Age Prediction":
+with tabs[3]:
     st.markdown("""
     <div class="page-hero">
         <h1>⏳ Age Prediction</h1>
@@ -1332,7 +1347,7 @@ elif tab == "⏳  Age Prediction":
 # ══════════════════════════════════════════════
 #  TAB 5 — CLUSTERING
 # ══════════════════════════════════════════════
-elif tab == "🔵  Clustering":
+with tabs[4]:
     st.markdown("""
     <div class="page-hero">
         <h1>🔵 Clustering Analysis</h1>
@@ -1532,7 +1547,7 @@ elif tab == "🔵  Clustering":
          "South American Gondwana region (~490 mya). Located at longitude -65, latitude -24 — what is now Argentina. Represents early Paleozoic Southern Hemisphere diversity.", GREEN),
         ("🦘 Australian Isolate", "Cluster 7",
          "Very specific isolated group in the Southern Hemisphere (longitude 145, latitude -41) — Tasmania/Victoria. High age-span std suggests long evolutionary sequence in a stable environment.", "#7B68EE),"),
-        ("💀 Permian Survivors", "Cluster 3",
+        ("🧬 Permian Survivors", "Cluster 3",
          "The Extinction group. Youngest age (~276 mya), smallest size (n=7). Represents the final, rare trilobite lineages just before the Permian extinction wiped them out forever.", RED),
         ("🔬 Taxonomic Outliers", "Clusters 8 & 9",
          "Cluster 8 has an extremely high genus_num (~371k), likely a data artifact or a highly widespread European genus. Cluster 9 captures Mid-Ordovician European sequences.", DUST),
@@ -1554,7 +1569,7 @@ elif tab == "🔵  Clustering":
 # ══════════════════════════════════════════════
 #  TAB 6 — RAW DATA
 # ══════════════════════════════════════════════
-elif tab == "🗃️  Raw Data":
+with tabs[5]:
     st.markdown("""
     <div class="page-hero">
         <h1>🗃️ Raw Dataset</h1>
